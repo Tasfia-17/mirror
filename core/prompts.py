@@ -24,11 +24,27 @@ Return JSON with:
 - cta: call-to-action"""
 
 FORMAT_GUIDELINES = {
-    "linkedin": "Professional, value-driven. Start with insight. End with question to drive comments. 30-45 sec.",
-    "tiktok": "Hook in 1 sec. Fast cuts. Trending audio style. Vertical 9:16. 15-30 sec.",
-    "youtube": "Storytelling arc. Intro/body/CTA. Landscape 16:9. 45-60 sec.",
-    "sales": "Problem, Solution, Proof. Direct, benefit-focused. 30 sec.",
-    "podcast": "Conversational, deep-dive teaser. Audio-first. 45-60 sec.",
+    "linkedin": (
+        "Professional, value-driven. Start with a bold insight or counterintuitive claim. "
+        "Use short paragraphs (1-2 sentences). End with a question to drive comments. "
+        "Tone: like a founder on a podcast, honest, no corporate speak. 30-45 sec."
+    ),
+    "tiktok": (
+        "Hook in the first second or you lose them. Fast, punchy sentences. "
+        "Use pattern interrupts. Trending audio style. Vertical 9:16. 15-30 sec."
+    ),
+    "youtube": (
+        "Storytelling arc: hook, problem, solution, proof, CTA. "
+        "Speak directly to camera. Landscape 16:9. 45-60 sec."
+    ),
+    "sales": (
+        "Problem, Solution, Proof structure. Lead with the pain point. "
+        "One clear benefit per sentence. End with a specific CTA. 30 sec."
+    ),
+    "podcast": (
+        "Conversational, deep-dive teaser. Speak as if to one person. "
+        "Raise a question you will answer. Audio-first, no visual references. 45-60 sec."
+    ),
 }
 
 BROLL_PROMPT = """Generate a B-roll scene description for this moment:

@@ -1,10 +1,11 @@
-"""MIRROR Orchestrator -- LangGraph state machine with conditional edges."""
+"""MIRROR Orchestrator -- LangGraph state machine with conditional edges and router visualization."""
 import time
 import uuid
 from langgraph.graph import StateGraph, END
 from core.state import MirrorState
 from agents import intake, identity, format, critic, cinematic, hyperframes, translate, optimizer
 from clients import posthog_client
+from core.router_viz import get_router_viz, reset_router_viz
 
 
 def route_by_quality(state: MirrorState) -> str:

@@ -40,6 +40,9 @@ class MirrorState(TypedDict):
     # Optimizer outputs
     optimized_prompts: Optional[dict]
 
+    # Avatar collaboration
+    avatar_collaboration: Optional[dict]
+
     # LiveAvatar session
     liveavatar_session: Optional[dict]
 

@@ -50,3 +50,20 @@ def get_job(job_id: str):
     if not job:
         return JSONResponse(status_code=404, content={"error": "Job not found"})
     return job
+
+
+@app.get("/health")
+def health():
+    """Health check endpoint."""
+    return {"status": "healthy", "service": "MIRROR", "version": "1.0.0"}
+
+
+@app.get("/stats")
+def stats():
+    """Return job statistics."""
+    return {
+        "total_jobs": len(_jobs),
+        "running": sum(1 for j in _jobs.values() if j["status"] == "running"),
+        "complete": sum(1 for j in _jobs.values() if j["status"] == "complete"),
+        "error": sum(1 for j in _jobs.values() if j["status"] == "error"),
+    }

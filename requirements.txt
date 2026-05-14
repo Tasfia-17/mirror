@@ -13,3 +13,4 @@ Pillow==11.0.0
 requests==2.32.3
 rich==13.9.4
 tenacity==9.0.0
+pytest>=8.0.0

@@ -14,7 +14,7 @@ def _require(key: str) -> str:
         raise EnvironmentError(
             f"Missing required environment variable: {key}\n"
             f"Copy .env.example to .env and add your API keys.\n"
-            f"See README.md for setup instructions."
+            f"See QUICKSTART.md for setup instructions."
         )
     return val
 

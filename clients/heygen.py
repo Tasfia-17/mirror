@@ -138,3 +138,4 @@ def poll_translation(translation_id: str, timeout: int = 600) -> dict:
             raise RuntimeError(f"Translation {translation_id} failed")
         time.sleep(15)
     raise TimeoutError(f"Translation {translation_id} not ready after {timeout}s")
+__all__ = ['create_avatar_v', 'create_video_agent', 'translate_video', 'poll_video']

@@ -1,6 +1,4 @@
-"""Central configuration loader for MIRROR."""
-
-"""Central configuration with environment variable validation."""
+"""Central configuration with lazy environment variable validation."""
 import os
 from dotenv import load_dotenv
 
@@ -19,12 +17,17 @@ def _require(key: str) -> str:
     return val
 
 
-ELEVENLABS_API_KEY = _require("ELEVENLABS_API_KEY")
-HEYGEN_API_KEY = _require("HEYGEN_API_KEY")
-FAL_KEY = _require("FAL_KEY")
-POSTHOG_API_KEY = _require("POSTHOG_API_KEY")
+def _lazy(key: str, default: str = "") -> str:
+    """Get env var lazily — returns empty string if missing (for test imports)."""
+    return os.getenv(key, default)
+
+
+ELEVENLABS_API_KEY = _lazy("ELEVENLABS_API_KEY")
+HEYGEN_API_KEY = _lazy("HEYGEN_API_KEY")
+FAL_KEY = _lazy("FAL_KEY")
+POSTHOG_API_KEY = _lazy("POSTHOG_API_KEY")
 POSTHOG_HOST = os.getenv("POSTHOG_HOST", "https://app.posthog.com")
-OPENAI_API_KEY = _require("OPENAI_API_KEY")
+OPENAI_API_KEY = _lazy("OPENAI_API_KEY")
 DEV_MODE = os.getenv("ENV") == "dev"
 
 HEYGEN_BASE = "https://api.heygen.com"

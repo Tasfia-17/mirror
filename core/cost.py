@@ -88,17 +88,21 @@ def calculate_generation_cost(
     }
 
 
-def calculate_margin(tier: str, minutes_used: int) -> dict:
-    """Calculate margin for a given tier and usage level."""
+def calculate_margin(tier: str, generations_used: int) -> dict:
+    """Calculate margin for a given tier and number of generations used.
+
+    Args:
+        tier: Pricing tier (starter/pro/enterprise).
+        generations_used: Number of full pipeline runs (each = 1 voice memo in).
+    """
     pricing = PRICING[tier]
     revenue = pricing["price_monthly"]
 
-    cost_per_30s = calculate_generation_cost(60, 30)["total"]
-    cost_per_min = cost_per_30s * 2
-    total_cost = cost_per_min * minutes_used
+    cost_per_gen = calculate_generation_cost(60, 30)["total"]
+    total_cost = cost_per_gen * generations_used
 
-    if minutes_used > pricing["minutes_included"]:
-        overage = minutes_used - pricing["minutes_included"]
+    if generations_used > pricing["minutes_included"]:
+        overage = generations_used - pricing["minutes_included"]
         revenue += overage * pricing["overage_per_min"]
 
     margin = revenue - total_cost
@@ -110,8 +114,7 @@ def calculate_margin(tier: str, minutes_used: int) -> dict:
         "cost": round(total_cost, 2),
         "margin": round(margin, 2),
         "margin_pct": round(margin_pct, 1),
-        "minutes_used": minutes_used,
-        "breakeven_customers": round(pricing["price_monthly"] / (pricing["price_monthly"] - total_cost), 1) if total_cost < pricing["price_monthly"] else None,
+        "generations_used": generations_used,
     }
 
 

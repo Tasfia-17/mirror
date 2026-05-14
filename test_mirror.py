@@ -34,19 +34,19 @@ class TestElevenLabsClient:
 
 
 class TestPostHogClient:
-    @patch("clients.posthog_client.posthog")
-    def test_capture_calls_posthog(self, mock_posthog):
+    @patch("clients.posthog_client._client")
+    def test_capture_calls_posthog(self, mock_client):
         from clients.posthog_client import capture
         capture("user_1", "test_event", {"key": "value"})
-        mock_posthog.capture.assert_called_once_with(
+        mock_client.capture.assert_called_once_with(
             "user_1", "test_event", properties={"key": "value"}
         )
 
-    @patch("clients.posthog_client.posthog")
-    def test_track_llm_uses_ai_generation_event(self, mock_posthog):
+    @patch("clients.posthog_client._client")
+    def test_track_llm_uses_ai_generation_event(self, mock_client):
         from clients.posthog_client import track_llm
         track_llm("user_1", "gpt-4o-mini", 100, 50, 1200.0, "test_step")
-        call_args = mock_posthog.capture.call_args
+        call_args = mock_client.capture.call_args
         assert call_args[0][1] == "$ai_generation"
         props = call_args[1]["properties"]
         assert props["$ai_model"] == "gpt-4o-mini"
@@ -99,13 +99,17 @@ class TestRetry:
 class TestCostCalculator:
     def test_calculate_generation_cost_returns_positive_total(self):
         from core.cost import calculate_generation_cost
-        cost = calculate_generation_cost(30)
+        # 60s input, 30s output, 5 formats, 10 languages — full pipeline
+        cost = calculate_generation_cost(60, 30, 5, 10)
         assert cost["total"] > 0
-        assert cost["total"] < 20  # sanity check
+        assert cost["total"] < 30  # sanity check: full pipeline under $30
+        assert cost["formats"] == 5
+        assert cost["languages"] == 10
 
     def test_calculate_margin_pro_tier(self):
         from core.cost import calculate_margin
-        margin = calculate_margin("pro", 96)
+        # Pro tier: $199/mo. At ~$20/generation, 5 generations = ~$102 cost → positive margin.
+        margin = calculate_margin("pro", 5)
         assert margin["revenue"] == 199
         assert margin["margin_pct"] > 0
 

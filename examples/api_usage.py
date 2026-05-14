@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Example of using MIRROR via the FastAPI endpoint."""
 import requests
 

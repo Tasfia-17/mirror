@@ -1,4 +1,6 @@
 """Central configuration loader for MIRROR."""
+
+"""Central configuration with environment variable validation."""
 import os
 from dotenv import load_dotenv
 

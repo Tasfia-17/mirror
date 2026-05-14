@@ -35,3 +35,11 @@ LANGUAGES = [
     "Spanish", "French", "German", "Japanese", "Chinese",
     "Portuguese", "Korean", "Arabic", "Hindi", "Italian",
 ]
+
+# Version
+VERSION = "1.0.0"
+
+# Feature flags
+ENABLE_CRITIC_LOOP = True
+ENABLE_HYPERFRAMES = True
+ENABLE_TRANSLATIONS = True

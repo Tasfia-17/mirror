@@ -1,0 +1,15 @@
+elevenlabs==1.54.0
+fal-client==0.5.9
+posthog==3.7.4
+langgraph==0.2.74
+langchain-openai==0.2.14
+openai==1.57.4
+fastapi==0.115.6
+uvicorn==0.32.1
+python-multipart==0.0.20
+httpx==0.28.1
+python-dotenv==1.0.1
+Pillow==11.0.0
+requests==2.32.3
+rich==13.9.4
+tenacity==9.0.0

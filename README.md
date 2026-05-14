@@ -37,6 +37,104 @@ Total output: 50 pieces of content from one voice memo.
 Estimated cost: $4.20 per generation.
 Equivalent agency cost: $50,000 per month.
 
+## Core Concepts
+
+### Multi-Agent Orchestration
+
+MIRROR uses 9 specialized agents coordinated by LangGraph:
+
+1. **Intake Agent**: Transcribes audio with ElevenLabs Scribe v2, detects emotion with GPT-4o-mini
+2. **Vision Agent**: Analyzes uploaded images for visual context (optional)
+3. **Identity Agent**: Clones voice with ElevenLabs IVC, creates Avatar V digital twin
+4. **Format Agent**: Rewrites script for 5 platforms in parallel (async optimization)
+5. **Critic Agent**: Scores scripts 0-10, triggers rewrite if score < 7 (quality gate)
+6. **Cinematic Agent**: Generates 4-shot B-roll with Fal Kling 2.1 Pro
+7. **Hyperframes Agent**: Composes HTML overlays (lower thirds, CTAs, waveforms)
+8. **Translate Agent**: Translates to 10 languages with HeyGen Video Translate
+9. **Optimizer Agent**: Surfaces improvement signals from PostHog analytics
+
+### Conditional Quality Loop
+
+The Critic agent creates a conditional edge in the graph:
+
+```
+Format → Critic → [Quality Check]
+           ↓           ↓
+      if score < 7   if score >= 7
+      loop back      proceed to Cinematic
+```
+
+This prevents weak scripts from reaching expensive video generation.
+Maximum 2 rewrites to avoid infinite loops.
+
+### Self-Improving Pipeline
+
+PostHog tracks every agent decision:
+- Quality scores per platform
+- Cost per generation
+- Latency per stage
+- A/B test results for prompt variants
+
+The Optimizer agent reads this data and surfaces which format needs improvement.
+In production, it updates PostHog feature flags to improve prompts without code deploys.
+
+### Multi-Modal Input
+
+MIRROR accepts:
+- **Audio**: Voice memos (MP3, WAV, M4A)
+- **Images**: Reference photos for visual context (JPG, PNG)
+- **Text**: Optional script override
+
+The Vision agent analyzes images with GPT-4 Vision and provides scene context
+to the Format agent for more relevant scripts.
+
+### Platform-Specific Optimization
+
+Each format has tailored guidelines:
+
+- **LinkedIn**: Professional, value-driven, ends with engagement question
+- **TikTok**: Hook in 1 second, fast-paced, vertical 9:16
+- **YouTube**: Storytelling arc with intro/body/CTA, landscape 16:9
+- **Sales**: Problem-Solution-Proof structure, direct CTA
+- **Podcast**: Conversational, audio-first, no visual references
+
+### Hyperframes Composition
+
+Hyperframes renders HTML/CSS/JavaScript to MP4:
+
+- **Podcast**: Animated waveform visualization with Canvas
+- **YouTube**: Animated lower thirds with red accent bar, subscribe button
+- **LinkedIn**: Professional lower thirds with company branding
+- **TikTok**: Flash hooks and trending-style overlays
+- **Sales**: Bold headlines and CTA buttons
+
+This enables A/B testing visual elements without re-rendering video.
+
+### Cost Model
+
+Per generation (60s input, 5 formats, 10 languages):
+
+| Service | Cost |
+|---|---|
+| ElevenLabs Scribe v2 | $0.10 |
+| ElevenLabs IVC | $0.10 |
+| OpenAI GPT-4o-mini | $0.05 |
+| HeyGen Video Agent (x5) | $1.50 |
+| HeyGen Video Translate (x10) | $1.50 |
+| Fal Kling B-roll | $0.75 |
+| Fal FLUX thumbnails | $0.25 |
+| **Total** | **$4.25** |
+
+Pricing tiers with 89% margin at Pro level ($199/mo).
+
+### Deployment Options
+
+- **Web**: Next.js 14 app with SSE progress streaming
+- **Mobile**: React Native PWA with one-tap voice capture
+- **Desktop**: Tauri app with local file processing
+- **CLI**: Enhanced with interactive mode and watch mode
+- **API**: RESTful API with batch processing and webhooks
+
 ---
 
 ## Architecture

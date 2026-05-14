@@ -7,7 +7,9 @@ Transcript: {transcript}
 Return JSON with:
 - emotion: one of [confident, excited, calm, urgent, inspirational, professional]
 - tone: one of [casual, formal, energetic, thoughtful]
-- key_themes: list of 3 main topics"""
+- key_themes: list of 3 main topics
+- speaking_pace: one of [slow, moderate, fast]
+- audience: who this message is most relevant to (one sentence)"""
 
 FORMAT_REWRITE = """Rewrite this transcript for {format} format.
 

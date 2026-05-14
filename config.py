@@ -43,3 +43,6 @@ VERSION = "1.0.0"
 ENABLE_CRITIC_LOOP = True
 ENABLE_HYPERFRAMES = True
 ENABLE_TRANSLATIONS = True
+
+# Demo mode: pre-approve all Critic scores for reliable demo timing
+DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"

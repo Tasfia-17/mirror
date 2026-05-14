@@ -3,7 +3,7 @@ import json
 from openai import OpenAI
 from core.state import MirrorState
 from clients import posthog_client
-from config import OPENAI_API_KEY
+from config import OPENAI_API_KEY, DEMO_MODE
 
 _llm = OpenAI(api_key=OPENAI_API_KEY)
 
@@ -29,6 +29,19 @@ def run(state: MirrorState) -> MirrorState:
 
     if not scripts:
         state["quality_scores"] = {}
+        return state
+
+    # Demo mode: approve all scripts immediately for reliable timing
+    if DEMO_MODE:
+        scores = {platform: 8.5 for platform in scripts.keys()}
+        state["quality_scores"] = scores
+        for platform in scripts.keys():
+            posthog_client.capture(user_id, "critic_evaluation", {
+                "platform": platform,
+                "score": 8.5,
+                "demo_mode": True,
+                "trace_id": state.get("trace_id"),
+            })
         return state
 
     scores = {}

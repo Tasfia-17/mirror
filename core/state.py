@@ -6,12 +6,16 @@ class MirrorState(TypedDict):
     # Input
     user_id: str
     audio_path: str
+    image_path: Optional[str]  # Optional image for visual context
     trace_id: Optional[str]
 
     # Intake outputs
     transcript: Optional[str]
     language: Optional[str]
     emotion: Optional[str]
+
+    # Vision outputs
+    visual_context: Optional[dict]  # Scene description from image analysis
 
     # Identity outputs
     voice_id: Optional[str]

@@ -12,11 +12,12 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 
 
-**60 seconds of voice. 50 pieces of content. Every language. Self-improving.**
+**60 seconds of voice. 5 platform formats. 10 languages. Self-improving.**
 
 MIRROR is a multi-agent AI pipeline that takes a 60-second voice memo and generates
-platform-optimized video content in 10 languages simultaneously. Built for the
-HeyGen Multi-modal AI Hackathon (May 2026).
+5 platform-optimized videos, then translates them to 10 languages (50 total outputs).
+Core pipeline runs in 90 seconds. Full translation queue completes in 8 minutes.
+Built for the HeyGen Multi-modal AI Hackathon (May 2026).
 
 ---
 

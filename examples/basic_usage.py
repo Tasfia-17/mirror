@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Basic MIRROR usage example."""
 from core.orchestrator import run_pipeline
 

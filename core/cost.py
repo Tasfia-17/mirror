@@ -1,89 +1,109 @@
 """Cost calculator for MIRROR pricing model."""
 
-# API Costs (per unit)
+# API costs per unit (USD)
 COSTS = {
-    "elevenlabs_transcribe": 0.10,  # per minute
-    "elevenlabs_ivc": 0.10,  # one-time per voice
-    "elevenlabs_tts": 0.30,  # per 1000 chars
-    "heygen_video": 0.30,  # per minute
-    "heygen_translate": 0.15,  # per minute per language
-    "fal_kling": 0.25,  # per 10 seconds
-    "fal_wan": 0.15,  # per 5 seconds
-    "openai_gpt4o_mini": 0.15 / 1_000_000,  # per input token
+    "elevenlabs_transcribe": 0.10,    # per minute of input audio
+    "elevenlabs_ivc": 0.10,           # one-time per voice clone
+    "elevenlabs_tts": 0.30,           # per 1000 characters
+    "heygen_video_agent": 0.0333,     # per second of output video
+    "heygen_translate": 0.0333,       # per second per language (speed mode)
+    "heygen_translate_precision": 0.0667,  # per second per language (precision mode)
+    "fal_kling": 0.10,                # per second of output video
+    "fal_wan": 0.15,                  # per 5-second clip
+    "fal_flux": 0.05,                 # per image
+    "openai_gpt4o_mini_input": 0.15 / 1_000_000,   # per input token
+    "openai_gpt4o_mini_output": 0.60 / 1_000_000,  # per output token
 }
 
-
-def calculate_generation_cost(duration_seconds: int, num_formats: int = 5, num_languages: int = 10) -> dict:
-    """Calculate cost for one generation based on output duration."""
-    
-    duration_min = duration_seconds / 60
-    
-    # One-time costs
-    transcribe = COSTS["elevenlabs_transcribe"] * 1  # 60s input
-    voice_clone = COSTS["elevenlabs_ivc"]
-    
-    # Per-format costs
-    script_rewrites = COSTS["openai_gpt4o_mini"] * 500 * num_formats  # ~500 tokens per rewrite
-    videos = COSTS["heygen_video"] * duration_min * num_formats
-    
-    # Cinematic (optional, 1 per format)
-    broll = COSTS["fal_kling"] * (10 / 10) * num_formats  # 10s clips
-    
-    # Translation (per format × languages)
-    translations = COSTS["heygen_translate"] * duration_min * num_formats * num_languages
-    
-    total = transcribe + voice_clone + script_rewrites + videos + broll + translations
-    
-    return {
-        "transcribe": round(transcribe, 2),
-        "voice_clone": round(voice_clone, 2),
-        "script_rewrites": round(script_rewrites, 2),
-        "videos": round(videos, 2),
-        "broll": round(broll, 2),
-        "translations": round(translations, 2),
-        "total": round(total, 2),
-        "per_output_minute": round(total / (duration_min * num_formats * (1 + num_languages)), 2)
-    }
-
-
-# Pricing Tiers (per-minute model)
+# Pricing tiers
 PRICING = {
     "starter": {
         "price_monthly": 49,
-        "minutes_included": 20,  # 20 minutes of final video
+        "minutes_included": 20,
         "overage_per_min": 3.00,
     },
     "pro": {
         "price_monthly": 199,
-        "minutes_included": 120,  # 120 minutes of final video
+        "minutes_included": 120,
         "overage_per_min": 2.00,
     },
     "enterprise": {
         "price_monthly": 499,
         "minutes_included": 500,
         "overage_per_min": 1.50,
-    }
+    },
 }
 
 
+def calculate_generation_cost(
+    input_duration_sec: int = 60,
+    output_duration_sec: int = 30,
+    num_formats: int = 5,
+    num_languages: int = 10,
+) -> dict:
+    """Calculate cost for one MIRROR generation.
+
+    Args:
+        input_duration_sec: Length of the input voice memo in seconds.
+        output_duration_sec: Target length of each output video in seconds.
+        num_formats: Number of platform formats to generate.
+        num_languages: Number of translation languages.
+
+    Returns:
+        Dict with per-service cost breakdown and total.
+    """
+    input_min = input_duration_sec / 60
+
+    transcribe = COSTS["elevenlabs_transcribe"] * input_min
+    voice_clone = COSTS["elevenlabs_ivc"]
+
+    # LLM calls: emotion detection + 5 format rewrites + 5 critic evaluations
+    llm_input_tokens = 800 * (1 + num_formats * 2)
+    llm_output_tokens = 300 * (1 + num_formats * 2)
+    llm = (
+        llm_input_tokens * COSTS["openai_gpt4o_mini_input"]
+        + llm_output_tokens * COSTS["openai_gpt4o_mini_output"]
+    )
+
+    videos = COSTS["heygen_video_agent"] * output_duration_sec * num_formats
+    broll = COSTS["fal_kling"] * 10 * num_formats  # 10s clip per format
+    thumbnails = COSTS["fal_flux"] * num_formats
+    translations = COSTS["heygen_translate"] * output_duration_sec * num_languages
+
+    total = transcribe + voice_clone + llm + videos + broll + thumbnails + translations
+
+    return {
+        "elevenlabs_transcribe": round(transcribe, 4),
+        "elevenlabs_ivc": round(voice_clone, 4),
+        "openai_llm": round(llm, 4),
+        "heygen_videos": round(videos, 4),
+        "fal_broll": round(broll, 4),
+        "fal_thumbnails": round(thumbnails, 4),
+        "heygen_translations": round(translations, 4),
+        "total": round(total, 2),
+        "formats": num_formats,
+        "languages": num_languages,
+        "total_outputs": num_formats + num_formats * num_languages,
+        "cost_per_output": round(total / (num_formats + num_formats * num_languages), 4),
+    }
+
+
 def calculate_margin(tier: str, minutes_used: int) -> dict:
-    """Calculate margin for a given tier and usage."""
-    
+    """Calculate margin for a given tier and usage level."""
     pricing = PRICING[tier]
     revenue = pricing["price_monthly"]
-    
-    # Cost calculation (assuming 30s average output)
-    cost_per_min = calculate_generation_cost(30)["per_output_minute"]
+
+    cost_per_30s = calculate_generation_cost(60, 30)["total"]
+    cost_per_min = cost_per_30s * 2
     total_cost = cost_per_min * minutes_used
-    
-    # Overage revenue
+
     if minutes_used > pricing["minutes_included"]:
-        overage_mins = minutes_used - pricing["minutes_included"]
-        revenue += overage_mins * pricing["overage_per_min"]
-    
+        overage = minutes_used - pricing["minutes_included"]
+        revenue += overage * pricing["overage_per_min"]
+
     margin = revenue - total_cost
     margin_pct = (margin / revenue * 100) if revenue > 0 else 0
-    
+
     return {
         "tier": tier,
         "revenue": round(revenue, 2),
@@ -91,26 +111,21 @@ def calculate_margin(tier: str, minutes_used: int) -> dict:
         "margin": round(margin, 2),
         "margin_pct": round(margin_pct, 1),
         "minutes_used": minutes_used,
-        "breakeven_minutes": round(revenue / cost_per_min, 1)
+        "breakeven_customers": round(pricing["price_monthly"] / (pricing["price_monthly"] - total_cost), 1) if total_cost < pricing["price_monthly"] else None,
     }
 
 
-# Example calculations
 if __name__ == "__main__":
     print("=== Cost per Generation ===")
-    for duration in [15, 30, 60, 300]:
-        cost = calculate_generation_cost(duration)
-        print(f"\n{duration}s output:")
-        print(f"  Total: ${cost['total']}")
-        print(f"  Per output minute: ${cost['per_output_minute']}")
-    
+    cost = calculate_generation_cost()
+    for k, v in cost.items():
+        print(f"  {k}: {v}")
+
     print("\n=== Margin Analysis ===")
     for tier in ["starter", "pro", "enterprise"]:
-        # Assume 80% utilization
         minutes = int(PRICING[tier]["minutes_included"] * 0.8)
-        margin = calculate_margin(tier, minutes)
+        m = calculate_margin(tier, minutes)
         print(f"\n{tier.upper()} (80% utilization):")
-        print(f"  Revenue: ${margin['revenue']}")
-        print(f"  Cost: ${margin['cost']}")
-        print(f"  Margin: ${margin['margin']} ({margin['margin_pct']}%)")
-        print(f"  Breakeven: {margin['breakeven_minutes']} min/mo")
+        print(f"  Revenue: ${m['revenue']}")
+        print(f"  Cost:    ${m['cost']}")
+        print(f"  Margin:  ${m['margin']} ({m['margin_pct']}%)")

@@ -369,3 +369,16 @@ The philosophical question MIRROR asks:
 ## License
 
 MIT
+
+
+## Hackathon Demo
+
+This project was built for the HeyGen Multi-modal AI Hackathon (May 14-15, 2026).
+
+**Demo video**: Coming soon
+**Slides**: Coming soon
+
+## Acknowledgments
+
+Built with HeyGen, ElevenLabs, Fal.ai, and PostHog APIs.
+Special thanks to the hackathon organizers and sponsors.

@@ -58,3 +58,4 @@ def generate_thumbnail(prompt: str) -> str:
         },
     )
     return result["images"][0]["url"]
+__all__ = ['generate_broll', 'generate_cinematic', 'generate_thumbnail']

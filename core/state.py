@@ -43,3 +43,9 @@ class MirrorState(TypedDict):
     errors: list
     start_time: float
 __all__ = ['MirrorState']
+
+
+def validate_state(state: MirrorState) -> bool:
+    """Validate that required state fields are present."""
+    required = ["user_id", "audio_path"]
+    return all(state.get(k) for k in required)

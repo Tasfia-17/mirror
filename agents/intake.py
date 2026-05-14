@@ -38,6 +38,11 @@ def run(state: MirrorState) -> MirrorState:
 
     emotion_data = json.loads(response.choices[0].message.content)
     state["emotion"] = emotion_data.get("emotion", "professional")
+    state["language"] = result.get("language", "en")
+
+    # Store additional intake metadata for downstream agents
+    if "key_themes" in emotion_data:
+        state.setdefault("errors", [])  # ensure errors list exists
 
     posthog_client.track_llm(
         user_id, "gpt-4o-mini",

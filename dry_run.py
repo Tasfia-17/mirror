@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """MIRROR -- dry-run cost estimation before running the pipeline."""
 import sys
 from core.cost import calculate_generation_cost, PRICING

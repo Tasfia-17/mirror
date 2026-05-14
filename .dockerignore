@@ -1,0 +1,10 @@
+.env
+__pycache__
+*.pyc
+.git
+.venv
+venv
+*.mp3
+*.mp4
+*.wav
+.DS_Store

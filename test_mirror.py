@@ -108,3 +108,13 @@ class TestCostCalculator:
         margin = calculate_margin("pro", 96)
         assert margin["revenue"] == 199
         assert margin["margin_pct"] > 0
+
+
+class TestConfig:
+    def test_require_raises_on_missing_env_var(self):
+        import os
+        from config import _require
+        if "NONEXISTENT_VAR" in os.environ:
+            del os.environ["NONEXISTENT_VAR"]
+        with pytest.raises(EnvironmentError, match="Missing required"):
+            _require("NONEXISTENT_VAR")

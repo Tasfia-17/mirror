@@ -42,3 +42,4 @@ def text_to_speech(text: str, voice_id: str, output_path: str) -> str:
         for chunk in audio:
             f.write(chunk)
     return output_path
+__all__ = ['transcribe', 'clone_voice', 'text_to_speech']

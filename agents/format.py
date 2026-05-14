@@ -74,3 +74,4 @@ def run(state: MirrorState) -> MirrorState:
     state["scripts"] = scripts
     state["videos"] = videos
     return state
+__all__ = ['run']

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!-- Hyperframes template: podcast waveform visualization -->
+<html>
+<head>
+  <style>
+    body { margin: 0; background: #111; overflow: hidden; }
+    #stage { width: 1920px; height: 1080px; position: relative; }
+    video { width: 100%; height: 100%; object-fit: cover; }
+    .waveform-bar { position: absolute; bottom: 0; background: #fff; border-radius: 2px 2px 0 0; opacity: 0.8; }
+    .episode-title { position: absolute; top: 40px; left: 60px; color: #fff; font-family: -apple-system, sans-serif; font-size: 28px; font-weight: 600; text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
+    .progress-bar { position: absolute; bottom: 0; left: 0; height: 4px; background: #fff; transition: width 0.1s linear; }
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <video id="avatar" src="{{video_url}}" autoplay muted></video>
+    <div class="episode-title">{{hook}}</div>
+    <canvas id="waveform" width="1920" height="120" style="position:absolute;bottom:0;left:0;"></canvas>
+    <div class="progress-bar" id="progress"></div>
+  </div>
+  <script>
+    const canvas = document.getElementById("waveform");
+    const ctx = canvas.getContext("2d");
+    const video = document.getElementById("avatar");
+    const progress = document.getElementById("progress");
+    const bars = 96;
+    const barWidth = 1920 / bars;
+
+    function drawWaveform(t) {
+      ctx.clearRect(0, 0, 1920, 120);
+      for (let i = 0; i < bars; i++) {
+        const h = 20 + Math.abs(Math.sin(i * 0.4 + t * 3)) * 80 + Math.random() * 10;
+        ctx.fillStyle = `rgba(255,255,255,${0.4 + Math.abs(Math.sin(i * 0.2 + t)) * 0.5})`;
+        ctx.fillRect(i * barWidth + 2, 120 - h, barWidth - 4, h);
+      }
+    }
+
+    let t = 0;
+    function animate() {
+      t += 0.016;
+      drawWaveform(t);
+      if (video.duration) {
+        progress.style.width = (video.currentTime / video.duration * 100) + "%";
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>

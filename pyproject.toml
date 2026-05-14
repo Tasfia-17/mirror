@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mirror-ai"
+version = "1.0.0"
+description = "60 seconds of voice into 50 pieces of content"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "Tasfia-17", email = "rifatasfiachowdhury@gmail.com"}]
+
+[project.urls]
+Homepage = "https://github.com/Tasfia-17/mirror"
+Repository = "https://github.com/Tasfia-17/mirror"

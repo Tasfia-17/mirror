@@ -6,7 +6,7 @@ from pathlib import Path
 from core.orchestrator import run_pipeline
 
 
-def main():
+def main() -> None:
     if len(sys.argv) < 2:
         print("Usage: python mirror.py <audio_file.mp3> [user_id]")
         print("       python mirror.py --dry-run")

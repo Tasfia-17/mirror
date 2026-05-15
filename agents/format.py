@@ -30,9 +30,9 @@ async def _rewrite_format(fmt: str, transcript: str, emotion: str) -> tuple:
     return fmt, script_data, usage
 
 
-async def _run_async(transcript: str, emotion: str) -> dict:
-    """Run all 5 format rewrites in parallel."""
-    tasks = [_rewrite_format(fmt, transcript, emotion) for fmt in FORMATS]
+async def _run_async(transcript: str, emotion: str, formats: list) -> dict:
+    """Run all format rewrites in parallel."""
+    tasks = [_rewrite_format(fmt, transcript, emotion) for fmt in formats]
     results = await asyncio.gather(*tasks)
     return {fmt: (data, usage) for fmt, data, usage in results}
 
@@ -46,7 +46,7 @@ def run(state: MirrorState) -> MirrorState:
     state["rewrite_count"] = state.get("rewrite_count", 0) + 1
 
     t0 = time.time()
-    results = asyncio.run(_run_async(transcript, emotion))
+    results = asyncio.run(_run_async(transcript, emotion, state.get("formats", FORMATS)))
     total_ms = (time.time() - t0) * 1000
 
     scripts = {}

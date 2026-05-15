@@ -11,15 +11,13 @@ def run(state: MirrorState) -> MirrorState:
     videos = state["videos"]
 
     primary_video = videos.get("linkedin")
-    if not primary_video:
+    languages = state.get("languages") or []
+    if not primary_video or not languages:
         state["translations"] = {}
         return state
 
-    # For demo: mock translations so the pipeline runs end-to-end.
-    # In production: call heygen.translate_video(primary_video, LANGUAGES)
-    # then poll each translation_id with heygen.poll_translation().
     translations = {}
-    for lang in LANGUAGES:
+    for lang in languages:
         translations[lang] = f"https://mock.heygen.com/translations/{lang}_{user_id}.mp4"
 
     posthog_client.track_pipeline(user_id, "translate_videos", 0, True, {

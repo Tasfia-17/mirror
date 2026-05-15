@@ -36,6 +36,7 @@ HEYGEN_BASE = "https://api.heygen.com"
 HEYGEN_HEADERS = {"X-Api-Key": HEYGEN_API_KEY, "Content-Type": "application/json"}
 
 FORMATS = ["linkedin", "tiktok", "youtube", "sales", "podcast"]
+FORMATS_QUICK = ["linkedin", "tiktok", "youtube", "sales"]
 LANGUAGES = [
     "Spanish", "French", "German", "Japanese", "Chinese",
     "Portuguese", "Korean", "Arabic", "Hindi", "Italian",

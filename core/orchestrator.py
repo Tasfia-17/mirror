@@ -3,6 +3,7 @@ import time
 import uuid
 from langgraph.graph import StateGraph, END
 from core.state import MirrorState
+from config import FORMATS, FORMATS_QUICK, LANGUAGES
 from agents import intake, identity, format, critic, cinematic, hyperframes, translate, optimizer, vision, collaboration
 from clients import posthog_client
 from core.router_viz import get_router_viz, reset_router_viz
@@ -77,7 +78,7 @@ def create_graph():
     return workflow.compile()
 
 
-def run_pipeline(audio_path: str, user_id: str = None, image_path: str = None) -> dict:
+def run_pipeline(audio_path: str, user_id: str = None, image_path: str = None, mode: str = "quick") -> dict:
     """Execute the full MIRROR pipeline."""
     if not user_id:
         user_id = str(uuid.uuid4())[:8]
@@ -86,6 +87,9 @@ def run_pipeline(audio_path: str, user_id: str = None, image_path: str = None) -
     start_time = time.time()
 
     reset_router_viz()
+
+    formats = FORMATS_QUICK if mode == "quick" else FORMATS
+    languages = [] if mode == "quick" else LANGUAGES
 
     initial_state: MirrorState = {
         "user_id": user_id,
@@ -100,6 +104,8 @@ def run_pipeline(audio_path: str, user_id: str = None, image_path: str = None) -
         "avatar_id": None,
         "avatar_look_id": None,
         "face_image_url": None,
+        "formats": formats,
+        "languages": languages,
         "scripts": {},
         "videos": {},
         "broll_urls": [],

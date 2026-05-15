@@ -23,6 +23,10 @@ class MirrorState(TypedDict):
     avatar_look_id: Optional[str]
     face_image_url: Optional[str]
 
+    # Format/language config (set by orchestrator based on mode)
+    formats: list
+    languages: list
+
     # Format outputs
     scripts: dict        # {format: script_text}
     videos: dict         # {format: video_url}

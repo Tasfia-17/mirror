@@ -6,16 +6,16 @@ from openai import OpenAI, AsyncOpenAI
 from core.state import MirrorState
 from clients import posthog_client
 from core.prompts import FORMAT_REWRITE, FORMAT_GUIDELINES
-from config import OPENAI_API_KEY, FORMATS
+from config import OPENAI_API_KEY, OPENAI_BASE_URL, OPENAI_MODEL, FORMATS
 
-_llm = OpenAI(api_key=OPENAI_API_KEY)
-_async_llm = AsyncOpenAI(api_key=OPENAI_API_KEY)
+_llm = OpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
+_async_llm = AsyncOpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
 
 
 async def _rewrite_format(fmt: str, transcript: str, emotion: str) -> tuple:
     """Rewrite transcript for a single format. Returns (fmt, script_data)."""
     response = await _async_llm.chat.completions.create(
-        model="gpt-4o-mini",
+        model=OPENAI_MODEL,
         messages=[{"role": "user", "content": FORMAT_REWRITE.format(
             format=fmt,
             transcript=transcript,

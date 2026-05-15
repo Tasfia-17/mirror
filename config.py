@@ -27,7 +27,9 @@ HEYGEN_API_KEY = _lazy("HEYGEN_API_KEY")
 FAL_KEY = _lazy("FAL_KEY")
 POSTHOG_API_KEY = _lazy("POSTHOG_API_KEY")
 POSTHOG_HOST = os.getenv("POSTHOG_HOST", "https://app.posthog.com")
-OPENAI_API_KEY = _lazy("OPENAI_API_KEY")
+OPENAI_API_KEY = _lazy("OPENROUTER_API_KEY")  # OpenRouter key
+OPENAI_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+OPENAI_MODEL = os.getenv("OPENROUTER_MODEL", "openai/gpt-4o-mini")
 DEV_MODE = os.getenv("ENV") == "dev"
 
 HEYGEN_BASE = "https://api.heygen.com"

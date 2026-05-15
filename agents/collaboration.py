@@ -3,9 +3,9 @@ import json
 from openai import OpenAI
 from core.state import MirrorState
 from clients import posthog_client
-from config import OPENAI_API_KEY
+from config import OPENAI_API_KEY, OPENAI_BASE_URL, OPENAI_MODEL
 
-_llm = OpenAI(api_key=OPENAI_API_KEY)
+_llm = OpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
 
 __all__ = ["run", "create_visual_markup"]
 
@@ -22,7 +22,7 @@ Generate visual markup annotations (circles, arrows, highlights) that Avatar 2 w
 Return JSON with: {{"annotations": [{{"type": "circle", "text": "weak hook", "position": "top"}}, ...], "approved": false}}"""
 
     response = _llm.chat.completions.create(
-        model="gpt-4o-mini",
+        model=OPENAI_MODEL,
         messages=[{"role": "user", "content": prompt}],
         response_format={"type": "json_object"},
         max_tokens=300,

@@ -3,9 +3,9 @@ import base64
 from openai import OpenAI
 from core.state import MirrorState
 from clients import posthog_client
-from config import OPENAI_API_KEY
+from config import OPENAI_API_KEY, OPENAI_BASE_URL, OPENAI_MODEL
 
-_llm = OpenAI(api_key=OPENAI_API_KEY)
+_llm = OpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
 
 __all__ = ["run", "analyze_image"]
 
@@ -16,7 +16,7 @@ def analyze_image(image_path: str) -> dict:
         image_data = base64.b64encode(f.read()).decode()
 
     response = _llm.chat.completions.create(
-        model="gpt-4o",
+        model=OPENAI_MODEL,
         messages=[{
             "role": "user",
             "content": [

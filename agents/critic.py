@@ -3,9 +3,9 @@ import json
 from openai import OpenAI
 from core.state import MirrorState
 from clients import posthog_client
-from config import OPENAI_API_KEY, DEMO_MODE
+from config import OPENAI_API_KEY, OPENAI_BASE_URL, OPENAI_MODEL, DEMO_MODE
 
-_llm = OpenAI(api_key=OPENAI_API_KEY)
+_llm = OpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
 
 SCRIPT_RUBRIC = """Evaluate this {platform} script on a 0-10 scale.
 
@@ -54,7 +54,7 @@ def run(state: MirrorState) -> MirrorState:
         )
 
         response = _llm.chat.completions.create(
-            model="gpt-4o-mini",
+            model=OPENAI_MODEL,
             messages=[{"role": "user", "content": prompt}],
             response_format={"type": "json_object"},
         )

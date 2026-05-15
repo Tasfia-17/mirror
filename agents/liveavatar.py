@@ -3,9 +3,9 @@ import requests
 from openai import OpenAI
 from core.state import MirrorState
 from clients import posthog_client
-from config import HEYGEN_API_KEY, HEYGEN_BASE, HEYGEN_HEADERS, OPENAI_API_KEY
+from config import HEYGEN_API_KEY, HEYGEN_BASE, HEYGEN_HEADERS, OPENAI_API_KEY, OPENAI_BASE_URL, OPENAI_MODEL
 
-_llm = OpenAI(api_key=OPENAI_API_KEY)
+_llm = OpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
 
 
 def create_session(state: MirrorState) -> dict:
@@ -71,7 +71,7 @@ def answer_question(question: str, state: MirrorState) -> str:
     )
 
     response = _llm.chat.completions.create(
-        model="gpt-4o-mini",
+        model=OPENAI_MODEL,
         messages=[
             {"role": "system", "content": f"You are the user's digital twin.\n{context}"},
             {"role": "user", "content": question},

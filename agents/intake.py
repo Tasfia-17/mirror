@@ -5,9 +5,9 @@ from openai import OpenAI
 from core.state import MirrorState
 from clients import elevenlabs, posthog_client
 from core.prompts import EMOTION_DETECTION
-from config import OPENAI_API_KEY
+from config import OPENAI_API_KEY, OPENAI_BASE_URL, OPENAI_MODEL
 
-_llm = OpenAI(api_key=OPENAI_API_KEY)
+_llm = OpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
 
 
 def run(state: MirrorState) -> MirrorState:
@@ -30,7 +30,7 @@ def run(state: MirrorState) -> MirrorState:
 
     t0 = time.time()
     response = _llm.chat.completions.create(
-        model="gpt-4o-mini",
+        model=OPENAI_MODEL,
         messages=[{"role": "user", "content": EMOTION_DETECTION.format(transcript=result["text"])}],
         response_format={"type": "json_object"},
     )

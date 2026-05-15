@@ -77,7 +77,7 @@ def create_graph():
     return workflow.compile()
 
 
-def run_pipeline(audio_path: str, user_id: str = None) -> dict:
+def run_pipeline(audio_path: str, user_id: str = None, image_path: str = None) -> dict:
     """Execute the full MIRROR pipeline."""
     if not user_id:
         user_id = str(uuid.uuid4())[:8]
@@ -90,7 +90,7 @@ def run_pipeline(audio_path: str, user_id: str = None) -> dict:
     initial_state: MirrorState = {
         "user_id": user_id,
         "audio_path": audio_path,
-        "image_path": None,
+        "image_path": image_path,
         "trace_id": trace_id,
         "transcript": None,
         "language": None,

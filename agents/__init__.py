@@ -1,2 +1,2 @@
 """MIRROR agents."""
-from . import intake, identity, format, critic, cinematic, hyperframes, translate, optimizer, collaboration
+from . import intake, vision, identity, format, critic, cinematic, hyperframes, translate, collaboration, optimizer
